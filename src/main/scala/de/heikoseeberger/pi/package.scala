@@ -16,7 +16,7 @@
 
 package de.heikoseeberger
 
-package object demoakkastreamspi {
+package object pi {
 
   val Traversable = scala.collection.immutable.Traversable
   type Traversable[+A] = scala.collection.immutable.Traversable[A]

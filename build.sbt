@@ -20,11 +20,11 @@ unmanagedSourceDirectories.in(Compile) := List(scalaSource.in(Compile).value)
 unmanagedSourceDirectories.in(Test)    := List(scalaSource.in(Test).value)
 
 libraryDependencies ++= List(
-  "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
-  "org.scalatest"  %% "scalatest"  % "2.2.5"  % "test"
+  "com.typesafe.akka" %% "akka-actor"               % "2.4.0-RC3",
+  "com.typesafe.akka" %% "akka-stream-experimental" % "1.0",
+  "org.scalacheck"    %% "scalacheck"               % "1.12.5" % "test",
+  "org.scalatest"     %% "scalatest"                % "2.2.5"  % "test"
 )
-
-testFrameworks := List(sbt.TestFrameworks.ScalaTest)
 
 initialCommands := """|import de.heikoseeberger.demoakkastreamspi._""".stripMargin
 
