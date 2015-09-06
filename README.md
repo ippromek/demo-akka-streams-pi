@@ -1,6 +1,6 @@
 # demo-akka-streams-pi #
 
-Welcome to demo-akka-streams-pi!
+Simple demo for [Akka](http://akka.io) Streams. Inspired by – well, more or less copied from – the [work of my mate Mathias Doenitz](https://github.com/sirthias/rs-comparison).
 
 ## Contribution policy ##
 
