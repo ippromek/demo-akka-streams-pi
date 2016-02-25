@@ -20,16 +20,15 @@ unmanagedSourceDirectories.in(Compile) := List(scalaSource.in(Compile).value)
 unmanagedSourceDirectories.in(Test)    := List(scalaSource.in(Test).value)
 
 libraryDependencies ++= List(
-  "com.typesafe.akka" %% "akka-actor"               % "2.4.0",
-  "com.typesafe.akka" %% "akka-stream-experimental" % "1.0",
-  "org.scalacheck"    %% "scalacheck"               % "1.12.5" % "test",
-  "org.scalatest"     %% "scalatest"                % "2.2.5"  % "test"
+  "com.typesafe.akka" %% "akka-stream" % "2.4.2",
+  "org.scalacheck"    %% "scalacheck"  % "1.12.5" % "test",
+  "org.scalatest"     %% "scalatest"   % "2.2.6"  % "test"
 )
 
 initialCommands := """|import de.heikoseeberger.demoakkastreamspi._""".stripMargin
 
 import scalariform.formatter.preferences._
-preferences := preferences.value
+scalariformPreferences := scalariformPreferences.value
   .setPreference(AlignSingleLineCaseStatements, true)
   .setPreference(AlignSingleLineCaseStatements.MaxArrowIndent, 100)
   .setPreference(DoubleIndentClassDeclaration, true)

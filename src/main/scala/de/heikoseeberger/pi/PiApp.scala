@@ -23,8 +23,8 @@
 package de.heikoseeberger.pi
 
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{ Broadcast, Flow, FlowGraph, Keep, Merge, Sink, Source, ZipWith }
-import akka.stream.{ ActorMaterializer, Attributes }
+import akka.stream.{ ActorMaterializer, Attributes, FlowShape, ThrottleMode }
+import akka.stream.scaladsl.{ Broadcast, Flow, GraphDSL, Keep, Merge, Sink, Source, ZipWith }
 import scala.concurrent.duration.DurationInt
 import scala.util.{ Random, Try }
 
@@ -61,13 +61,13 @@ object PiApp {
     implicit val system = ActorSystem("pi-system")
     implicit val mat = ActorMaterializer()
 
-    Source(newRandomDoubleIterator _)
+    Source.fromIterator(newRandomDoubleIterator)
       .grouped(2)
       .map { case Seq(x, y) => (x, y) }
       .via(toSample)
       .scan(State(0, 0))(_.next(_))
-      .conflate(identity)(Keep.right)
-      .via(onePerSecond)
+      .conflate(Keep.right)
+      .throttle(1, 1.second, 1, ThrottleMode.Shaping)
       .map(state => f"After ${state.nrOfSamples}%,10d samples π is approximated as ${state.pi}%.6f")
       .take(nrOfSteps)
       .map(println)
@@ -78,8 +78,8 @@ object PiApp {
       override def next() = Random.nextDouble()
     }
 
-    def toSample = Flow() { implicit builder =>
-      import FlowGraph.Implicits._
+    def toSample = Flow.fromGraph(GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
 
       val broadcast = builder.add(Broadcast[Point](2))
       val collectInside = builder.add(Flow[Point].filter(isInside).map(_ => Sample.Inside))
@@ -89,21 +89,7 @@ object PiApp {
       broadcast.out(0) ~> collectInside ~> merge.in(0)
       broadcast.out(1) ~> collectOutside ~> merge.in(1)
 
-      (broadcast.in, merge.out)
-    }
-
-    // Set the input buffer size to 1 to avoid prefetchig State instances, drop the one that still gets prefetched
-    def onePerSecond = Flow() { implicit builder =>
-      import FlowGraph.Implicits._
-
-      val ticks = builder.add(Source(1.second, 1.second, ()))
-      val zip = builder.add(ZipWith[State, Unit, State](Keep.left).withAttributes(Attributes.inputBuffer(1, 1)))
-      val dropOne = builder.add(Flow[State].drop(1))
-
-      ticks ~> zip.in1
-      zip.out ~> dropOne.inlet
-
-      (zip.in0, dropOne.outlet)
-    }
+      FlowShape(broadcast.in, merge.out)
+    })
   }
 }
