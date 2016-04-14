@@ -7,8 +7,8 @@ name            := "demo-akka-streams-pi"
 git.baseVersion := "0.1.0"
 licenses        += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-scalaVersion   := "2.11.7"
-scalacOptions ++= List(
+scalaVersion   := "2.11.8"
+scalacOptions ++= Vector(
   "-unchecked",
   "-deprecation",
   "-language:_",
@@ -16,11 +16,11 @@ scalacOptions ++= List(
   "-encoding", "UTF-8"
 )
 
-unmanagedSourceDirectories.in(Compile) := List(scalaSource.in(Compile).value)
-unmanagedSourceDirectories.in(Test)    := List(scalaSource.in(Test).value)
+unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value)
+unmanagedSourceDirectories.in(Test)    := Vector(scalaSource.in(Test).value)
 
-libraryDependencies ++= List(
-  "com.typesafe.akka" %% "akka-stream" % "2.4.2",
+libraryDependencies ++= Vector(
+  "com.typesafe.akka" %% "akka-stream" % "2.4.4",
   "org.scalacheck"    %% "scalacheck"  % "1.12.5" % "test",
   "org.scalatest"     %% "scalatest"   % "2.2.6"  % "test"
 )
